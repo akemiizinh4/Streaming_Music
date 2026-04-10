@@ -24,6 +24,7 @@ public class StreamingMusicaAluno {
             usuarioLogado = new Usuario(); 
         }
         
+        
         int opcao;
         do {
             exibirMenu();
