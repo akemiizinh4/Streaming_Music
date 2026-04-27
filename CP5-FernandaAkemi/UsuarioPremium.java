@@ -16,8 +16,7 @@ public class UsuarioPremium extends Usuario {
     public void reproduzirMusica(Musica musica) {
         reproducoesPremium++;
         System.out.println("🎵 Reproduzindo em ALTA QUALIDADE: " + musica.getTitulo());
-        historicoReproducao.add(musica);
-        Usuario.totalReproducoesGerais++; 
+        super.reproduzirMusica(musica);   
     }
 
     public void baixarMusica(Musica musica) {
