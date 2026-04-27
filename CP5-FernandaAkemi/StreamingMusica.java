@@ -67,40 +67,82 @@ public class StreamingMusica {
 
     private static void processarMenuPrincipal(int opcao) {
         switch (opcao) {
-            case 1 -> criarNovoUsuario();
-            case 2 -> fazerLogin();
-            case 3 -> listarUsuarios();
-            case 4 -> exibirEstatisticas();
-            case 0 -> usuarioLogado = null; 
-            default -> System.out.println("⚠️ Opção inválida.");
+            case 1:
+                criarNovoUsuario();
+                break;
+            case 2:
+                fazerLogin();
+                break;
+            case 3:
+                listarUsuarios();
+                break;
+            case 4:
+                exibirEstatisticas();
+                break;
+            case 0:
+                usuarioLogado = null;
+                return;
+            default:
+                System.out.println("⚠️ Opção inválida.");
         }
     }
 
     private static void processarMenuUsuario(int opcao) {
         if (usuarioLogado instanceof UsuarioFree) {
             switch (opcao) {
-                case 1 -> reproduzirDoBanco();
-                case 2 -> usuarioLogado.exibirHistorico();
-                case 3 -> criarNovaPlaylist();
-                case 4 -> gerarPlaylistAutomatica();
-                case 5 -> reproduzirPlaylist();
-                case 6 -> fazerUpgrade();
-                case 0 -> usuarioLogado = null; 
-                default -> System.out.println("⚠️ Opção inválida.");
+                case 1:
+                    reproduzirDoBanco();
+                    break;
+                case 2:
+                    usuarioLogado.exibirHistorico();
+                    break;
+                case 3:
+                    criarNovaPlaylist();
+                    break;
+                case 4:
+                    gerarPlaylistAutomatica();
+                    break;
+                case 5:
+                    reproduzirPlaylist();
+                    break;
+                case 6:
+                    fazerUpgrade();
+                    break;
+                case 0:
+                    usuarioLogado = null;
+                    break;
+                default:
+                    System.out.println("⚠️ Opção inválida.");
             }
         } else if (usuarioLogado instanceof UsuarioPremium) {
-            // DOWNCASTING demonstrado aqui
             UsuarioPremium userPremium = (UsuarioPremium) usuarioLogado;
             switch (opcao) {
-                case 1 -> reproduzirDoBanco();
-                case 2 -> userPremium.exibirHistorico();
-                case 3 -> criarNovaPlaylist();
-                case 4 -> gerarPlaylistAutomatica();
-                case 5 -> reproduzirPlaylist();
-                case 6 -> baixarMusicaSistema(userPremium);
-                case 7 -> userPremium.listarMusicasBaixadas();
-                case 0 -> usuarioLogado = null; // Faz o logout
-                default -> System.out.println("⚠️ Opção inválida.");
+                case 1:
+                    reproduzirDoBanco();
+                    break;
+                case 2:
+                    userPremium.exibirHistorico();
+                    break;
+                case 3:
+                    criarNovaPlaylist();
+                    break;
+                case 4:
+                    gerarPlaylistAutomatica();
+                    break;
+                case 5:
+                    reproduzirPlaylist();
+                    break;
+                case 6:
+                    baixarMusicaSistema(userPremium);
+                    break;
+                case 7:
+                    userPremium.listarMusicasBaixadas();
+                    break;
+                case 0:
+                    usuarioLogado = null;
+                    break;
+                default:
+                    System.out.println("⚠️ Opção inválida.");
             }
         }
     }
@@ -211,7 +253,8 @@ public class StreamingMusica {
 
     private static void criarNovaPlaylist() {
         System.out.print("Nome da playlist: ");
-        String nome = scanner.nextLine();
+        String nome = scanner.nextLine().trim();
+        if (nome.isEmpty()) nome = "Nova Playlist";
         usuarioLogado.criarPlaylist(nome);
     }
 
@@ -223,11 +266,13 @@ public class StreamingMusica {
         System.out.print("Escolha: ");
         int op = lerOpcao();
         
-        String nome = op == 1 ? "Top 10 Mais Tocadas" : op == 2 ? "Recomendadas para Você" : "Adicionadas Recentemente";
+        String nome = op == 1 ? "Top 10 Mais Tocadas" : 
+                     op == 2 ? "Recomendadas para Você" : "Adicionadas Recentemente";
+        
         System.out.println("🤖 Gerando playlist \"" + nome + "\"...");
         
         PlaylistAutomatica auto = new PlaylistAutomatica(nome, nome);
-        for(Musica m : bancoDeMusicas) {
+        for (Musica m : bancoDeMusicas) {
             auto.adicionarMusica(m);
         }
         
@@ -283,9 +328,10 @@ public class StreamingMusica {
         String plano = opPlano == 2 ? "Anual" : opPlano == 3 ? "Familiar" : "Mensal";
         
         UsuarioPremium novoUsuario = new UsuarioPremium(usuarioLogado.getNome(), usuarioLogado.getEmail(), plano);
-        novoUsuario.getPlaylists().addAll(usuarioLogado.getPlaylists());
         
-        // Substitui na lista de usuários
+        novoUsuario.getPlaylists().addAll(usuarioLogado.getPlaylists());
+        novoUsuario.historicoReproducao.addAll(usuarioLogado.historicoReproducao);
+        
         int index = usuarios.indexOf(usuarioLogado);
         if (index != -1) {
             usuarios.set(index, novoUsuario);
@@ -298,8 +344,11 @@ public class StreamingMusica {
     // ================= UTILITÁRIOS =================
 
     private static int lerOpcao() {
-        try { return Integer.parseInt(scanner.nextLine().trim()); } 
-        catch (Exception e) { return -1; }
+        try { 
+            return Integer.parseInt(scanner.nextLine().trim()); 
+        } catch (Exception e) { 
+            return -1; 
+        }
     }
 
     private static void popularDadosTeste() {
